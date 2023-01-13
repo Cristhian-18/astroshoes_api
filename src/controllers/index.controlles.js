@@ -1,4 +1,4 @@
-
+//--------------------------------------------------------CONEXION A POSTGRES--------------------------------------------------------------///
 const {Pool}=require('pg')
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -14,7 +14,7 @@ pool.connect()
 const getProdcuto = async (req, res) => {
     try
     {
-        const response = await pool.query('SELECT * FROM "Usuario"');
+        const response = await pool.query('SELECT * FROM "Producto"');
         res.status(200).json(response.rows);
 
     } catch (error)
@@ -31,7 +31,7 @@ const getProdcutoById = async (req, res) => {
     try
     {
         const id_producto = parseInt(req.params.id);
-        const response = await pool.query('SELECT * FROM "Producto" WHERE id_producto = $1', [id_producto]);
+        const response = await pool.query('SELECT * FROM "Producto" WHERE "id_producto" = $1', [id_producto]);
         res.json(response.rows);
 
     } catch (error)
@@ -46,12 +46,13 @@ const createProducto = async (req, res) => {
 
     try
     {
-        const { id_producto, codigo_producto,img, nombre_pro, descripcion, marca, genero, talla, costo } = req.body;
-        const response = await pool.query('INSERT INTO "Producto" ("id_producto", "codigo_producto","img","nombre_producto","descripcion","marca","genero","talla","costo") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);', [id_producto, codigo_producto ,img, nombre_pro, descripcion, marca, genero, talla, costo]);
+        const { id_producto, codigo_producto,img, nombre_producto, descripcion, fk_marca, modelo, genero, talla, costo, oferta } = req.body;
+        const response = await pool.query('INSERT INTO "Producto" ("id_producto", "codigo_producto","img","nombre_producto","descripcion","fk_marca","modelo","genero","talla","costo","oferta") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', 
+        [id_producto, codigo_producto ,img, nombre_producto, descripcion, fk_marca, modelo,genero, talla, costo, oferta]);
         res.json({
-             message: 'User Added successfully',
+            message: 'Ingreso Exitoso!!',
         body: {
-            producto: {id_producto, codigo_producto,img, nombre_pro, descripcion, marca, genero, talla, costo}
+            producto: {id_producto, codigo_producto,img, nombre_producto, descripcion, fk_marca, modelo, genero, talla, costo, oferta}
         }
     });
 
@@ -68,17 +69,20 @@ const updateProducto = async (req, res) => {
     try
     {
         const id = parseInt(req.params.id);
-        const { id_producto, img, nombre_pro, descripcion, marca, genero, talla, costo } = req.body;
+        const { id_producto, codigo_producto,img, nombre_producto, descripcion, fk_marca, modelo, genero, talla, costo, oferta } = req.body;
 
-        const response =await pool.query('UPDATE "Producto" SET "id_producto" = $1, "codigo_producto"=$2 ,"img" = $3, "nombre_producto" = $4, "descripcion" = $5, "marca" = $6, "genero" = $7, "talla" = $8, "costo" = $9 WHERE "id_producto" = $1', [
-            id_producto, 
+        const response =await pool.query('UPDATE "Producto" SET "id_producto" = $1, "codigo_producto"=$2 ,"img" = $3, "nombre_producto" = $4, "descripcion" = $5, "fk_marca" = $6, "modelo" = $7,"genero" = $8, "talla" = $9, "costo" = $10,"oferta" = $11, WHERE "id_producto" = $1', [
+            id_producto,
+            codigo_producto, 
             img, 
-            nombre_pro, 
+            nombre_producto, 
             descripcion, 
-            marca, 
+            fk_marca, 
+            modelo,
             genero, 
             talla, 
             costo,
+            oferta,
             id
         ]);
         res.json('User Updated Successfully');
@@ -129,6 +133,98 @@ const getMarcas = async (req, res) => {
 
 };
 
+const getMarcasById = async (req, res) => {
+    try
+    {
+        const id_Marca = parseInt(req.params.id);
+        const response = await pool.query('select *from "Marca" WHERE "id_Marca" = $1', [id_Marca]);
+        res.json(response.rows);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }
+};
+
+const createMarca= async (req, res) => {
+    try
+    {
+        const { id_Marca,nombre,descripcion } = req.body;
+        const response = await pool.query('INSERT INTO "Marca" ("id_Marca","nombre","descripcion") VALUES($1, $2, $3);', 
+        [id_Marca,nombre,descripcion]);
+        res.json({
+             message: 'Ingreso Exitoso!!',
+        body: {
+            producto: {id_Marca,nombre,descripcion}
+        }
+    });
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+const updateMarca = async (req, res) => {
+    try
+    {
+        const id_Marca = parseInt(req.params.id);
+        const {nombre,descripcion } = req.body;
+
+        const response =await pool.query('UPDATE "Marca" SET "nombre"=$1 ,"descripcion" = $2 WHERE "id_Marca" = $3 ;', [        
+            nombre,
+            descripcion,
+            id_Marca
+        ]);
+        res.json('Marca Updated Exitosa');
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+
+};
+const deleteMarca = async (req, res) => {
+
+    try
+    {
+        const id_Marca = parseInt(req.params.id);
+        await pool.query('DELETE FROM "Marca" where "id_Marca" = $1', [
+            id_Marca
+        ]);
+        res.json(`User ${id_Marca} deleted Successfully`);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+
+};
+//------------------------------------------------------------SENTENCIAS DE TABLA CATEGORIAS-------------------------------------------------///
+
+const getCategoria = async (req, res) => {
+
+    try
+    {
+        const response = await pool.query('select *from "Categoria"');
+        res.status(200).json(response.rows);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+
+};
+
 
 module.exports = {
     getProdcuto,
@@ -136,5 +232,10 @@ module.exports = {
     createProducto,
     updateProducto,
     deleteProducto,
-    getMarcas
+    getMarcas,
+    getMarcasById,
+    createMarca,
+    updateMarca,
+    deleteMarca,
+    getCategoria
 };

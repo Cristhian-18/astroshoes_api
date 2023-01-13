@@ -13,6 +13,7 @@ app.use(express.urlencoded({extended:false}));
 //router
 app.use('/producto',require('./routers/index'));
 app.use('/marca',require('./routers/indexM'));
+app.use('/categoria',require('./routers/indexC'));
 
 app.listen(port);
 console.log('INICIO DE SERVER EXITOSO ',port,'!!');
