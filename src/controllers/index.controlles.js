@@ -210,7 +210,6 @@ const deleteMarca = async (req, res) => {
 //------------------------------------------------------------SENTENCIAS DE TABLA CATEGORIAS-------------------------------------------------///
 
 const getCategoria = async (req, res) => {
-
     try
     {
         const response = await pool.query('select *from "Categoria"');
@@ -222,9 +221,84 @@ const getCategoria = async (req, res) => {
             message:"Lo sentimos!!! :'v "
         })
     }   
-
 };
 
+const getCategoriaById = async (req, res) => {
+    try
+    {
+        const pk_nombre_cat = req.params.id;
+        const response = await pool.query('select *from "Categoria" WHERE "pk_nombre_cat" = $1;', [pk_nombre_cat]);
+        res.json(response.rows);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }
+}
+
+const createCategoria= async (req, res) => {
+    try
+    {
+        const {pk_nombre_cat,id_categoria,descripcion } = req.body;
+        const response = await pool.query('INSERT INTO "Categoria" ("pk_nombre_cat","id_categoria","descripcion") VALUES ($1, $2, $3);', 
+        [pk_nombre_cat,id_categoria,descripcion]);
+        res.json({
+             message: 'Ingreso Exitoso!!',
+        body: {
+            producto: {pk_nombre_cat,id_categoria,descripcion}
+        }
+    });
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+
+const updateCategoria = async (req, res) => {
+    try
+    {
+        const pk_nombre_cat = req.params.id;
+        const {id_categoria,descripcion } = req.body;
+
+        const response =await pool.query('UPDATE "Categoria" SET "id_categoria"=$1 ,"descripcion" = $2 WHERE "pk_nombre_cat" = $3', [        
+            id_categoria,
+            descripcion,
+            pk_nombre_cat
+        ]);
+        res.json('Categoria Updated Exitosa');
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+
+}
+
+const deleteCategoria = async (req, res) => {
+
+    try
+    {
+        const pk_nombre_cat = req.params.id;
+        await pool.query('DELETE FROM "Categoria" where "pk_nombre_cat" = $1', [
+            pk_nombre_cat
+        ]);
+        res.json(`User ${pk_nombre_cat} deleted Successfully`);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+
+};
 
 module.exports = {
     getProdcuto,
@@ -237,5 +311,9 @@ module.exports = {
     createMarca,
     updateMarca,
     deleteMarca,
-    getCategoria
+    getCategoria,
+    getCategoriaById,
+    createCategoria,
+    updateCategoria,
+    deleteCategoria
 };
