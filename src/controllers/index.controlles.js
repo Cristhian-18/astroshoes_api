@@ -7,10 +7,10 @@ const pool = new Pool({
     port:process.env.DB_PORT,
     database:process.env.DB_DATABASE
 })
-
 pool.connect()
 .then(()=> console.log("Conexion Exitosa!!"));
 //-----------------------------------------------------------SENTENCIAS DE TABLA PRODUCTOS-------------------------------------------------///
+//-------------------------SELECCIONAR PROUCTO----------------------------//
 const getProdcuto = async (req, res) => {
     try
     {
@@ -25,13 +25,13 @@ const getProdcuto = async (req, res) => {
     }
     
 };
-
+//------------------------SELECCIONAR POR ID DE PROUCTO----------------------------//
 const getProdcutoById = async (req, res) => {
 
     try
     {
-        const id_producto = parseInt(req.params.id);
-        const response = await pool.query('SELECT * FROM "Producto" WHERE "id_producto" = $1', [id_producto]);
+        const pk_id_producto = parseInt(req.params.id);
+        const response = await pool.query('SELECT * FROM "Producto" WHERE "pk_id_producto" = $1', [pk_id_producto]);
         res.json(response.rows);
 
     } catch (error)
@@ -41,18 +41,18 @@ const getProdcutoById = async (req, res) => {
         })
     }
 };
-
+//----------------------------CREAR PROUCTO----------------------------//
 const createProducto = async (req, res) => {
 
     try
     {
-        const { id_producto, codigo_producto,img, nombre_producto, descripcion, fk_marca, modelo, genero, talla, costo, oferta } = req.body;
-        const response = await pool.query('INSERT INTO "Producto" ("id_producto", "codigo_producto","img","nombre_producto","descripcion","fk_marca","modelo","genero","talla","costo","oferta") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11);', 
-        [id_producto, codigo_producto ,img, nombre_producto, descripcion, fk_marca, modelo,genero, talla, costo, oferta]);
+        const {pk_id_producto,codigo_producto,img,nombre_producto,descripcion,fk_marca,modelo,genero,talla,costo,oferta,fk_nombre_categoria  } = req.body;
+        const response = await pool.query('insert into "Producto"(pk_id_producto,codigo_producto,img,nombre_producto,descripcion,fk_marca,modelo, genero, talla, costo,oferta, fk_nombre_categoria)values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12);', 
+        [pk_id_producto,codigo_producto,img,nombre_producto,descripcion,fk_marca,modelo,genero,talla,costo,oferta,fk_nombre_categoria]);
         res.json({
             message: 'Ingreso Exitoso!!',
         body: {
-            producto: {id_producto, codigo_producto,img, nombre_producto, descripcion, fk_marca, modelo, genero, talla, costo, oferta}
+            producto: {pk_id_producto,codigo_producto,img,nombre_producto,descripcion,fk_marca,modelo,genero,talla,costo,oferta,fk_nombre_categoria}
         }
     });
 
@@ -63,27 +63,26 @@ const createProducto = async (req, res) => {
         })
     }   
 };
-
+//----------------------------MODIFICAR PROUCTO----------------------------//
 const updateProducto = async (req, res) => {
 
     try
     {
-        const id = parseInt(req.params.id);
-        const { id_producto, codigo_producto,img, nombre_producto, descripcion, fk_marca, modelo, genero, talla, costo, oferta } = req.body;
+        const pk_id_producto = parseInt(req.params.id);
+        const { codigo_producto,img,nombre_producto,descripcion,fk_marca,modelo,genero,talla,costo,oferta,fk_nombre_categoria } = req.body;
 
-        const response =await pool.query('UPDATE "Producto" SET "id_producto" = $1, "codigo_producto"=$2 ,"img" = $3, "nombre_producto" = $4, "descripcion" = $5, "fk_marca" = $6, "modelo" = $7,"genero" = $8, "talla" = $9, "costo" = $10,"oferta" = $11, WHERE "id_producto" = $1', [
-            id_producto,
-            codigo_producto, 
-            img, 
-            nombre_producto, 
-            descripcion, 
-            fk_marca, 
+        const response =await pool.query('UPDATE "Producto" SET codigo_producto=$1,img=$2,nombre_producto=$3,descripcion=$4,fk_marca=$5,modelo=$6, genero=$7, talla=$8, costo=$9,oferta=$10,fk_nombre_categoria=$11 WHERE "pk_id_producto" =$12', [
+            codigo_producto,
+            img,nombre_producto,
+            descripcion,
+            fk_marca,
             modelo,
-            genero, 
-            talla, 
+            genero,
+            talla,
             costo,
             oferta,
-            id
+            fk_nombre_categoria,
+            pk_id_producto
         ]);
         res.json('User Updated Successfully');
 
@@ -95,7 +94,7 @@ const updateProducto = async (req, res) => {
     }   
 
 };
-
+//-------------------------------DELETE PROUCTO------------------------------//
 const deleteProducto = async (req, res) => {
 
     try
@@ -112,11 +111,10 @@ const deleteProducto = async (req, res) => {
             message:"Lo sentimos!!! :'v "
         })
     }   
-
 };
 
 //-----------------------------------------------------------SENTENCIAS DE TABLA MARCAS-------------------------------------------------///
-
+//-------------------------SELECCIONAR MARCAS----------------------------//
 const getMarcas = async (req, res) => {
 
     try
@@ -132,7 +130,7 @@ const getMarcas = async (req, res) => {
     }   
 
 };
-
+//------------------------SELECCIONAR POR ID DE MARCAS----------------------------//
 const getMarcasById = async (req, res) => {
     try
     {
@@ -147,7 +145,7 @@ const getMarcasById = async (req, res) => {
         })
     }
 };
-
+//----------------------------CREAR MARCAS----------------------------//
 const createMarca= async (req, res) => {
     try
     {
@@ -168,6 +166,7 @@ const createMarca= async (req, res) => {
         })
     }   
 };
+//----------------------------MODIFICAR MARCAS----------------------------//
 const updateMarca = async (req, res) => {
     try
     {
@@ -189,6 +188,7 @@ const updateMarca = async (req, res) => {
     }   
 
 };
+//-------------------------------DELETE MARCAS------------------------------//
 const deleteMarca = async (req, res) => {
 
     try
@@ -208,7 +208,7 @@ const deleteMarca = async (req, res) => {
 
 };
 //------------------------------------------------------------SENTENCIAS DE TABLA CATEGORIAS-------------------------------------------------///
-
+//-------------------------SELECCIONAR CATEGORIA----------------------------//
 const getCategoria = async (req, res) => {
     try
     {
@@ -222,7 +222,7 @@ const getCategoria = async (req, res) => {
         })
     }   
 };
-
+//------------------------SELECCIONAR POR NOMBRE DE CATEGORIA----------------------------//
 const getCategoriaById = async (req, res) => {
     try
     {
@@ -236,8 +236,8 @@ const getCategoriaById = async (req, res) => {
             message:"Lo sentimos!!! :'v "
         })
     }
-}
-
+};
+//----------------------------CREAR CATEGORIAS----------------------------//
 const createCategoria= async (req, res) => {
     try
     {
@@ -258,7 +258,7 @@ const createCategoria= async (req, res) => {
         })
     }   
 };
-
+//----------------------------MODIFICAR CATEGORIAS----------------------------//
 const updateCategoria = async (req, res) => {
     try
     {
@@ -279,8 +279,8 @@ const updateCategoria = async (req, res) => {
         })
     }   
 
-}
-
+};
+//-------------------------------DELETE CATEGORIAS------------------------------//
 const deleteCategoria = async (req, res) => {
 
     try
@@ -299,7 +299,288 @@ const deleteCategoria = async (req, res) => {
     }   
 
 };
+//----------------------------------------------------------USUARIO---------------------------------------------------------------///
+//-------------------------SELECCIONAR USUARIO----------------------------//
+const getUsuario = async (req, res) => {
+    try
+    {
+        const response = await pool.query('select *from "Usuario";');
+        res.status(200).json(response.rows);
 
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+//------------------------SELECCIONAR POR ID DE USUARIO----------------------------//
+const getUsuarioById = async (req, res) => {
+    try
+    {
+        const id_usuario = parseInt(req.params.id);
+        const response = await pool.query('select *from "Usuario" WHERE "id_usuario" = $1;', [id_usuario]);
+        res.json(response.rows);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }
+};
+//----------------------------CREAR UASUARIOS----------------------------//
+const createUsuario= async (req, res) => {
+    try
+    {
+        const {id_usuario,nombre,apellido,correo,contrasena } = req.body;
+        const response = await pool.query('INSERT INTO "Usuario" ("id_usuario","nombre","apellido","correo", "contrasena") VALUES ($1, $2, $3,$4,$5);', 
+        [id_usuario,nombre,apellido,correo,contrasena]);
+        res.json({
+             message: 'Ingreso Exitoso!!',
+        body: {
+            producto: {id_usuario,nombre,apellido,correo,contrasena}
+        }
+    });
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+//----------------------------MODIFICAR USUARIOS----------------------------//
+const updateUsuario = async (req, res) => {
+    try
+    {
+        const id_usuario = parseInt(req.params.id);
+        const {nombre,apellido,correo,contrasena } = req.body;
+
+        const response =await pool.query('UPDATE "Usuario" SET "nombre" = $1,"apellido"=$2, "correo"=$3, "contrasena"=$4 WHERE "id_usuario" = $5;', [        
+            nombre,
+            apellido,
+            correo,
+            contrasena,
+            id_usuario
+        ]);
+        res.json('Categoria Updated Exitosa');
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+
+};
+//-------------------------------DELETE USUARIOS------------------------------//
+const deleteUsuario = async (req, res) => {
+
+    try
+    {
+        const id_usuario = parseInt(req.params.id);
+        await pool.query('DELETE FROM "Usuario" where "id_usuario" = $1', [
+            id_usuario
+        ]);
+        res.json(`User ${id_usuario} deleted Successfully`);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+
+};
+//----------------------------------------------------------FAVORITOS---------------------------------------------------------------///
+//-------------------------------------------------------SELECCIONAR FAVORITOS------------------------------------------------------//
+const getFavoritos = async (req, res) => {
+    try
+    {
+        const response = await pool.query('select *from "Favoritos";');
+        res.status(200).json(response.rows);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+//------------------------SELECCIONAR POR ID DE FAVORITOS----------------------------//
+const getFavoritosById = async (req, res) => {
+    try
+    {
+        const pk_id_favorito = parseInt(req.params.id);
+        const response = await pool.query('select *from "Favoritos" WHERE "pk_id_favorito" = $1;', [pk_id_favorito]);
+        res.json(response.rows);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }
+};
+//----------------------------CREAR FAVORITOS----------------------------//
+const createFavorito= async (req, res) => {
+    try
+    {
+        const {pk_id_favorito,fk_id_usuario,fk_id_producto} = req.body;
+        const response = await pool.query('insert into "Favoritos"(pk_id_favorito, fk_id_usuario,fk_id_producto) values ($1,$2,$3);', 
+        [pk_id_favorito,fk_id_usuario,fk_id_producto]);
+        res.json({
+             message: 'Ingreso Exitoso!!',
+        body: {
+            producto: {pk_id_favorito,fk_id_usuario,fk_id_producto}
+        }
+    });
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+//----------------------------MODIFICAR FAVORITOS----------------------------//
+const updateFavoritos = async (req, res) => {
+    try
+    {
+        const pk_id_favorito = parseInt(req.params.id);
+        const {fk_id_usuario,fk_id_producto } = req.body;
+
+        const response =await pool.query('UPDATE "Favoritos" SET fk_id_usuario=$1,fk_id_producto=$2 WHERE "pk_id_favorito" = $3;', [        
+            fk_id_usuario,
+            fk_id_producto,
+            pk_id_favorito
+        ]);
+        res.json('Categoria Updated Exitosa');
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+
+};
+//-------------------------------DELETE FAVORITOS------------------------------//
+const deleteFavoritos = async (req, res) => {
+
+    try
+    {
+        const pk_id_favorito = parseInt(req.params.id);
+        await pool.query('DELETE FROM "Favoritos" where "pk_id_favorito" = $1', [
+            pk_id_favorito
+        ]);
+        res.json(`User ${pk_id_favorito} deleted Successfully`);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+//----------------------------------------------------------ADMINISTRACION---------------------------------------------------------------///
+//-------------------------SELECCIONAR ADMINISTRACION----------------------------//
+const getAdminstracion = async (req, res) => {
+    try
+    {
+        const response = await pool.query('select *from "Administrador";');
+        res.status(200).json(response.rows);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+//------------------------SELECCIONAR POR ID DE ADMINISTRACION----------------------------//
+const getAdminstracionById = async (req, res) => {
+    try
+    {
+        const pk_id_administrador = parseInt(req.params.id);
+        const response = await pool.query('select *from "Administrador" WHERE "pk_id_administrador" = $1;', [pk_id_administrador]);
+        res.json(response.rows);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }
+};
+//----------------------------CREAR ADMINISTRADOR----------------------------//
+const createAdminstracion= async (req, res) => {
+    try
+    {
+        const {pk_id_administrador,cedula,nombre_admin,apellido_admin,usuario,contrasena,email} = req.body;
+        const response = await pool.query('insert into "Administrador"("pk_id_administrador", "cedula", "nombre_admin", "apellido_admin", "usuario", "contrasena", "email") VALUES ($1, $2, $3,$4,$5,$6,$7);', 
+        [pk_id_administrador,cedula,nombre_admin,apellido_admin,usuario,contrasena,email]);
+        res.json({
+             message: 'Ingreso Exitoso!!',
+        body: {
+            producto: {pk_id_administrador,cedula,nombre_admin,apellido_admin,usuario,contrasena,email}
+        }
+    });
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+//----------------------------MODIFICAR ADMINISTRACION----------------------------//
+const updateAdministracion = async (req, res) => {
+    try
+    {
+        const pk_id_administrador = parseInt(req.params.id);
+        const {cedula,nombre_admin,apellido_admin,usuario,contrasena,email} = req.body;
+
+        const response =await pool.query('UPDATE "Administrador" SET "cedula"=$1, "nombre_admin"=$2, "apellido_admin"=$3, "usuario"=$4, "contrasena"=$5, "email"=$6 WHERE "pk_id_administrador" = $7;', [        
+            cedula,
+            nombre_admin,
+            apellido_admin,
+            usuario,
+            contrasena,
+            email,
+            pk_id_administrador
+        ]);
+        res.json('Categoria Updated Exitosa');
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+
+};
+//-------------------------------DELETE ADMINISTRACION------------------------------//
+const deleteAdministracion = async (req, res) => {
+
+    try
+    {
+        const pk_id_administrador = parseInt(req.params.id);
+        await pool.query('DELETE FROM "Administrador" where "pk_id_administrador" = $1', [
+            pk_id_administrador
+        ]);
+        res.json(`User ${pk_id_administrador} deleted Successfully`);
+
+    } catch (error)
+    {
+        return res.status(500).json({
+            message:"Lo sentimos!!! :'v "
+        })
+    }   
+};
+
+//----------------------------------------------------------COMUNICACION-------------------------------------------///
 module.exports = {
     getProdcuto,
     getProdcutoById,
@@ -315,5 +596,20 @@ module.exports = {
     getCategoriaById,
     createCategoria,
     updateCategoria,
-    deleteCategoria
+    deleteCategoria,
+    getUsuario,
+    getUsuarioById,
+    createUsuario,
+    updateUsuario,
+    deleteUsuario,
+    getFavoritos,
+    getFavoritosById,
+    createFavorito,
+    updateFavoritos,
+    deleteFavoritos,
+    getAdminstracion,
+    getAdminstracionById,
+    createAdminstracion,
+    updateAdministracion,
+    deleteAdministracion
 };

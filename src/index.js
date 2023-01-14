@@ -14,6 +14,9 @@ app.use(express.urlencoded({extended:false}));
 app.use('/producto',require('./routers/index'));
 app.use('/marca',require('./routers/indexM'));
 app.use('/categoria',require('./routers/indexC'));
+app.use('/usuario',require('./routers/indexU'));
+app.use('/favoritos',require('./routers/indexF'));
+app.use('/administracion',require('./routers/indexA'));
 
 app.listen(port);
-console.log('INICIO DE SERVER EXITOSO ',port,'!!');
+console.log('INICIO DE SERVER EXITOSO',port,'!!');
