@@ -10,7 +10,7 @@ const { deleteProducto }=require('../controllers/index.controlles');
 router.get('/',getProdcuto);
 router.get('/:id', getProdcutoById);
 router.post('/', createProducto);
-router.put('/:id', updateProducto)
+router.put('/:id', updateProducto);
 router.delete('/:id', deleteProducto);
 
 
