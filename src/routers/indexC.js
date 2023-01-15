@@ -11,7 +11,7 @@ const { deleteCategoria}=require('../controllers/index.controlles');
 router.get('/',getCategoria);
 router.get('/:id', getCategoriaById);
 router.post('/', createCategoria);
-router.put('/:pk_nombre_cat', updateCategoria);
+router.put('/:id', updateCategoria);
 router.delete('/:id', deleteCategoria);
 
 

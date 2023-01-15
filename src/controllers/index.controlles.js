@@ -265,7 +265,7 @@ const updateCategoria = async (req, res) => {
         const pk_nombre_cat = req.params.id;
         const {id_categoria,descripcion } = req.body;
 
-        const response =await pool.query('UPDATE "Categoria" SET "id_categoria"=$1 ,"descripcion" = $2 WHERE "pk_nombre_cat" = $3', [        
+        const response =await pool.query('UPDATE "Categoria" SET "id_categoria"= $1 ,"descripcion" = $2  WHERE "pk_nombre_cat" = $3;', [        
             id_categoria,
             descripcion,
             pk_nombre_cat
