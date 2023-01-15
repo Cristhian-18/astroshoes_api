@@ -99,18 +99,18 @@ const deleteProducto = async (req, res) => {
 
     try
     {
-        const id = parseInt(req.params.id);
-        await pool.query('DELETE FROM "Producto" where id_producto = $1', [
-            id
+        const pk_id_producto = parseInt(req.params.id);
+        await pool.query('DELETE FROM "Producto" where pk_id_producto = $1', [
+             pk_id_producto
         ]);
-        res.json(`User ${id} deleted Successfully`);
+        res.json(`User ${pk_id_producto} deleted Successfully`);
 
     } catch (error)
     {
         return res.status(500).json({
             message:"Lo sentimos!!! :'v "
         })
-    }   
+    }
 };
 
 //-----------------------------------------------------------SENTENCIAS DE TABLA MARCAS-------------------------------------------------///
