@@ -14,7 +14,7 @@ pool.connect()
 const getProdcuto = async (req, res) => {
     try
     {
-        const response = await pool.query('SELECT * FROM "Producto"');
+        const response = await pool.query('SELECT * FROM "Producto" ORDER BY pk_id_producto ASC;');
         res.status(200).json(response.rows);
 
     } catch (error)
@@ -119,7 +119,7 @@ const getMarcas = async (req, res) => {
 
     try
     {
-        const response = await pool.query('select *from "Marca"');
+        const response = await pool.query('SELECT * FROM "Marca" ORDER BY "id_Marca" ASC;');
         res.status(200).json(response.rows);
 
     } catch (error)
@@ -212,7 +212,7 @@ const deleteMarca = async (req, res) => {
 const getCategoria = async (req, res) => {
     try
     {
-        const response = await pool.query('select *from "Categoria"');
+        const response = await pool.query('SELECT * FROM "Categoria" ORDER BY "id_categoria" ASC;');
         res.status(200).json(response.rows);
 
     } catch (error)
